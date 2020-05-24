@@ -3,3 +3,6 @@ venv*
 
 # ignore idea
 .idea*
+
+# ignore poop
+poop*
