@@ -21,6 +21,7 @@ class Pakumon:
         mouth_top = 30 - self.r
         mouth_bottom = 330 + self.r
         arcade.draw_arc_filled(self.x, self.y, 50, 50, arcade.color.BANANA_YELLOW, mouth_top, mouth_bottom)
+        arcade.draw_arc_outline(self.x, self.y, 50, 50, arcade.color.BLACK, mouth_top, mouth_bottom)
         arcade.draw_circle_filled(self.x+4, self.y+10, 2.5, arcade.color.BLACK)
 
     def update(self):
@@ -43,6 +44,7 @@ class BouncyBall:
 
     def draw(self):
         arcade.draw_circle_filled(self.pos_x, self.pos_y, self.radius, self.color)
+        arcade.draw_circle_outline(self.pos_x, self.pos_y, self.radius, arcade.color.CYBER_YELLOW)
 
     def update(self):
         self.pos_x += self.delta_x
@@ -55,10 +57,11 @@ class BouncyBall:
             self.delta_y *= -1
 
 
-class BouncyBallPit(arcade.Window):
+class FeedingFrenzy(arcade.Window):
 
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
+        self.set_mouse_visible(False)
         arcade.set_background_color(arcade.color.COOL_GREY)
         self.balls = []
 
@@ -77,6 +80,9 @@ class BouncyBallPit(arcade.Window):
         for ball in self.balls:
             ball.update()
 
+    def on_mouse_motion(self, x, y, dx, dy):
+        self.p1.x = x
+        self.p1.y = y
 
 def ball_randomizer(radius=None, color=None):
 
@@ -101,7 +107,7 @@ def clamp(value, minval, maxval):
 
 def main():
     # setup window
-    window = BouncyBallPit(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    window = FeedingFrenzy(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
 
     # display
     arcade.run()
