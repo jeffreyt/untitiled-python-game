@@ -21,8 +21,8 @@ class Ball:
         arcade.draw_circle_filled(self.pos_x, self.pos_y, self.radius, self.color)
 
     def update(self):
-        self.pos_x += self.delta_x
-        self.pos_y += self.delta_y
+        self.pos_x = clamp(self.pos_x + self.delta_x, 0 + self.radius, SCREEN_WIDTH - self.radius)
+        self.pos_y = clamp(self.pos_y + self.delta_y, 0 + self.radius, SCREEN_HEIGHT - self.radius)
 
 
 class MyGame(arcade.Window):
@@ -72,6 +72,15 @@ def ball_randomizer(stationary=False):
     color = (random.randrange(0, 256), random.randrange(0, 256), random.randrange(0, 256))
 
     return [pos_x, pos_y, delta_x, delta_y, radius, color]
+
+
+def clamp(value, minval, maxval):
+    if value < minval:
+        return minval
+    elif value > maxval:
+        return maxval
+    else:
+        return value
 
 
 def main():
