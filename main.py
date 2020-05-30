@@ -1,29 +1,28 @@
 import arcade
 import random
+import math
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-NUMBER_OF_BALLS = 10
+NUMBER_OF_BALLS = 50
 MOVEMENT_SPEED = 3
 SCREEN_TITLE = "me hungry"
 
 
 class Pakumon:
-    def __init__(self, pos_x, pos_y, mouth_speed, radius):
-        self.pos_x = pos_x
-        self.pos_y = pos_y
-        self.delta_x = 0
-        self.delta_y = 0
+    def __init__(self, coords, mouth_speed, radius):
+        self.pos_x, self.pos_y, self.delta_x, self.delta_y = coords
         self.mouth = 0
         self.delta_mouth = mouth_speed
         self.radius = radius
+        self.arc_radius = radius * 2
         self.orientation = 0
 
     def draw(self):
         # arcade.draw_circle_filled(self.x, self.y, 50, arcade.color.BANANA_YELLOW)
         mouth_top = self.orientation + 30 - self.mouth
         mouth_bottom = self.orientation + 330 + self.mouth
-        arcade.draw_arc_filled(self.pos_x, self.pos_y, self.radius, self.radius, arcade.color.BANANA_YELLOW, mouth_top, mouth_bottom)
+        arcade.draw_arc_filled(self.pos_x, self.pos_y, self.arc_radius, self.arc_radius, arcade.color.BANANA_YELLOW, mouth_top, mouth_bottom)
         # arcade.draw_arc_outline(self.x, self.y, 50, 50, arcade.color.BLACK, mouth_top, mouth_bottom)
 
     def update(self):
@@ -37,11 +36,8 @@ class Pakumon:
 
 class BouncyBall:
 
-    def __init__(self, pos_x, pos_y, delta_x, delta_y, radius, init_color, is_eaten=False):
-        self.pos_x = pos_x
-        self.pos_y = pos_y
-        self.delta_x = delta_x
-        self.delta_y = delta_y
+    def __init__(self, coords, radius, init_color, is_eaten=False):
+        self.pos_x, self.pos_y, self.delta_x, self.delta_y = coords
         self.radius = radius
         self.color = init_color
         self.is_eaten = is_eaten
@@ -76,7 +72,7 @@ class HungryCircleGuy(arcade.Window):
         # construct
         self.balls = []
         self.score = 0
-        self.p1 = Pakumon(SCREEN_WIDTH*0.5, SCREEN_HEIGHT*0.5, 1, 50)
+        self.p1 = Pakumon((SCREEN_WIDTH*0.5, SCREEN_HEIGHT*0.5, 0, 0), 1, 30)
         for x in range(NUMBER_OF_BALLS):
             self.balls.append(BouncyBall(*ball_randomizer(radius=10, color=arcade.color.GHOST_WHITE)))
 
@@ -129,7 +125,7 @@ def ball_randomizer(radius=None, color=None):
     delta_y = random.randrange(2, 5) * random.choice([-1, 1])
     color = color if color else (random.randrange(0, 256), random.randrange(0, 256), random.randrange(0, 256))
 
-    return [pos_x, pos_y, delta_x, delta_y, radius, color]
+    return [(pos_x, pos_y, delta_x, delta_y), radius, color]
 
 
 def clamp(value, minval, maxval):
@@ -142,8 +138,12 @@ def clamp(value, minval, maxval):
 
 
 def detect_collision(p1, ball):
+    dx = p1.pos_x - ball.pos_x
+    dy = p1.pos_y - ball.pos_y
 
-    return False
+    dist = math.sqrt(dx**2 + dy**2)
+
+    return dist < (p1.radius * 0.5) + ball.radius
 
 
 def main():
