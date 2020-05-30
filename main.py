@@ -37,17 +37,19 @@ class Pakumon:
 
 class BouncyBall:
 
-    def __init__(self, pos_x, pos_y, delta_x, delta_y, radius, init_color):
+    def __init__(self, pos_x, pos_y, delta_x, delta_y, radius, init_color, is_eaten=False):
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.delta_x = delta_x
         self.delta_y = delta_y
         self.radius = radius
         self.color = init_color
+        self.is_eaten = is_eaten
 
     def draw(self):
-        arcade.draw_circle_filled(self.pos_x, self.pos_y, self.radius, self.color)
-        # arcade.draw_circle_outline(self.pos_x, self.pos_y, self.radius, arcade.color.CYBER_YELLOW)
+        if not self.is_eaten:
+            arcade.draw_circle_filled(self.pos_x, self.pos_y, self.radius, self.color)
+            # arcade.draw_circle_outline(self.pos_x, self.pos_y, self.radius, arcade.color.CYBER_YELLOW)
 
     def update(self):
         self.pos_x += self.delta_x
@@ -58,6 +60,9 @@ class BouncyBall:
 
         if self.pos_y < (0 + self.radius) or self.pos_y > (SCREEN_HEIGHT - self.radius):
             self.delta_y *= -1
+
+    def die(self):
+        self.is_eaten = True
 
 
 class HungryCircleGuy(arcade.Window):
@@ -89,6 +94,10 @@ class HungryCircleGuy(arcade.Window):
         self.p1.update()
         for ball in self.balls:
             ball.update()
+            if detect_collision(self.p1, ball):
+                ball.die()
+                self.balls.remove(ball)
+                self.score += 1
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.LEFT:
@@ -110,9 +119,6 @@ class HungryCircleGuy(arcade.Window):
         elif key == arcade.key.UP or key == arcade.key.DOWN:
             self.p1.delta_y = 0
 
-    # def on_mouse_motion(self, x, y, dx, dy):
-    #     self.p1.x = x
-    #     self.p1.y = y
 
 def ball_randomizer(radius=None, color=None):
 
@@ -135,7 +141,13 @@ def clamp(value, minval, maxval):
         return value
 
 
+def detect_collision(p1, ball):
+
+    return False
+
+
 def main():
+    """ main """
     # setup window
     window = HungryCircleGuy(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
 
