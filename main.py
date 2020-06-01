@@ -15,14 +15,13 @@ class Pakumon:
         self.mouth = 0
         self.delta_mouth = mouth_speed
         self.radius = radius
-        self.arc_radius = radius * 2
         self.orientation = 0
 
     def draw(self):
         # arcade.draw_circle_filled(self.x, self.y, 50, arcade.color.BANANA_YELLOW)
         mouth_top = self.orientation + 30 - self.mouth
         mouth_bottom = self.orientation + 330 + self.mouth
-        arcade.draw_arc_filled(self.pos_x, self.pos_y, self.arc_radius, self.arc_radius, arcade.color.BANANA_YELLOW, mouth_top, mouth_bottom)
+        arcade.draw_arc_filled(self.pos_x, self.pos_y, self.radius*2, self.radius*2, arcade.color.BANANA_YELLOW, mouth_top, mouth_bottom)
         # arcade.draw_arc_outline(self.x, self.y, 50, 50, arcade.color.BLACK, mouth_top, mouth_bottom)
 
     def update(self):
